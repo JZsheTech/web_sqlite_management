@@ -9,7 +9,7 @@ This repository is a minimal full‑stack web app for SQLite management, with a 
 - Keep new backend modules under `backend/` and new React components under `frontend/src/components/`.
 
 ## Build, Test, and Development Commands
-- Backend dev: `cd backend && pip install -r requirements.txt && uvicorn main:app --reload --port 8100` (use 8100 to avoid common 8000 clashes).
+- Backend dev: **Always** `conda activate /condaData/envs/webSqlite` before installing or running Python tooling. After activation, run `cd backend && pip install -r requirements.txt && uvicorn main:app --reload --port 8100` (use 8100 to avoid common 8000 clashes).
 - Frontend dev: `cd frontend && npm install && PORT=3100 npm start` (use 3100 to avoid common 3000 clashes).
 - Backend tests (when added): `cd backend && pytest`.
 - Frontend tests (when added): `cd frontend && npm test`.
@@ -33,3 +33,6 @@ This repository is a minimal full‑stack web app for SQLite management, with a 
 ## Security & Configuration Tips
 - Do not hard‑code secrets, API keys, or production database paths; prefer environment variables or configuration files ignored by Git.
 - Keep shipped SQLite data in `data/` non‑sensitive and suitable for sharing and testing.
+
+## Environment Notes
+- All backend Python commands must run inside the existing Conda env located at `/condaData/envs/webSqlite`. Run `conda activate webSqlite` (or the absolute path) before using Python or pip. Avoid the system Python interpreter.
