@@ -178,7 +178,7 @@ After AI coder generates the code, the run procedure should be:
 ```bash
 cd backend
 pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
+uvicorn main:app --reload --port 8100
 ```
 
 ### **Frontend**
@@ -186,10 +186,10 @@ uvicorn main:app --reload --port 8000
 ```bash
 cd frontend
 npm install
-npm start
+PORT=3100 npm start
 ```
 
-Frontend should run on port 3000 and call backend `http://localhost:8000`.
+To减少 3000/8000 等常用端口被占用的情况，推荐前端运行在端口 `3100`，并调用后端 `http://localhost:8100`。
 
 ---
 
@@ -216,4 +216,3 @@ MIT (or add your own license).
 > * Write clear comments in all generated files.
 > * Ensure SQLite file path is configurable.
 > * The goal is to deliver a working prototype, not a polished product.
-

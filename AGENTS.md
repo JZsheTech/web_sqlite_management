@@ -9,8 +9,8 @@ This repository is a minimal full‑stack web app for SQLite management, with a 
 - Keep new backend modules under `backend/` and new React components under `frontend/src/components/`.
 
 ## Build, Test, and Development Commands
-- Backend dev: `cd backend && pip install -r requirements.txt && uvicorn main:app --reload --port 8000`.
-- Frontend dev: `cd frontend && npm install && npm start` (default port 3000).
+- Backend dev: `cd backend && pip install -r requirements.txt && uvicorn main:app --reload --port 8100` (use 8100 to avoid common 8000 clashes).
+- Frontend dev: `cd frontend && npm install && PORT=3100 npm start` (use 3100 to avoid common 3000 clashes).
 - Backend tests (when added): `cd backend && pytest`.
 - Frontend tests (when added): `cd frontend && npm test`.
 - Production frontend build: `cd frontend && npm run build`.
@@ -28,7 +28,7 @@ This repository is a minimal full‑stack web app for SQLite management, with a 
 - Use small, focused commits with imperative messages (e.g., `Add table schema endpoint`, `Wire result table pagination`).
 - Reference issues in commit bodies or PR descriptions when applicable.
 - PRs should include: purpose summary, key changes, how to run backend/frontend, what was tested, and screenshots/GIFs for visible UI changes.
-- Ensure `uvicorn main:app --reload` and `npm start` both work before requesting review.
+- Ensure `uvicorn main:app --reload --port 8100` and `PORT=3100 npm start` both work before requesting review.
 
 ## Security & Configuration Tips
 - Do not hard‑code secrets, API keys, or production database paths; prefer environment variables or configuration files ignored by Git.
