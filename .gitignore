@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv
+venv/
+.env.local
+.env.*
+.DS_Store
+node_modules/
+build/
+dist/
+*.log
+coverage/
+backend/.pytest_cache/
+frontend/.eslintcache
