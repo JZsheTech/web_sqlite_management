@@ -350,6 +350,14 @@ select {
   padding: 12px;
 }
 
+.success-banner {
+  background: #dcfce7;
+  color: #166534;
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 12px;
+}
+
 .status-chip {
   padding: 8px 12px;
   border-radius: 999px;

@@ -106,6 +106,22 @@ class SQLiteDatabase:
                 "rowsAffected": cursor.rowcount,
             }
 
+    def execute_script(self, sql: str) -> Dict[str, Any]:
+        """Execute one or more SQL statements intended for schema/data changes."""
+        cleaned = (sql or "").strip()
+        if not cleaned:
+            raise ValueError("SQL script cannot be empty.")
+
+        statements = [statement.strip() for statement in cleaned.split(";") if statement.strip()]
+        with self.connect() as conn:
+            conn.executescript(cleaned)
+            conn.commit()
+
+        return {
+            "statementsExecuted": len(statements),
+            "message": "SQL script executed successfully.",
+        }
+
     def create_table(self, table_name: str, columns: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Create a table with the supplied column definitions."""
         sanitized_name = self._sanitize_identifier(table_name)

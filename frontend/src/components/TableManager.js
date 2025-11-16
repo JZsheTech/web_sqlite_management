@@ -332,13 +332,13 @@ export default function TableManager({ tables = [], onRefreshTables }) {
                     <input
                       type="text"
                       value={column.name}
-                      placeholder="Column name"
+                      placeholder="e.g. email or created_at"
                       onChange={(event) => handleColumnChange(index, "name", event.target.value)}
                     />
                     <input
                       type="text"
                       value={column.type}
-                      placeholder="Type (e.g. TEXT, INTEGER)"
+                      placeholder="e.g. TEXT, INTEGER, REAL"
                       onChange={(event) => handleColumnChange(index, "type", event.target.value)}
                     />
                   </div>
@@ -394,7 +394,7 @@ export default function TableManager({ tables = [], onRefreshTables }) {
                 list={tableSuggestionsId}
                 value={insertForm.tableName}
                 onChange={(event) => setInsertForm({ ...insertForm, tableName: event.target.value })}
-                placeholder="Target table"
+                placeholder="e.g. users"
               />
             </label>
             {insertForm.fields.map((field, index) => (
@@ -402,13 +402,13 @@ export default function TableManager({ tables = [], onRefreshTables }) {
                 <input
                   type="text"
                   value={field.column}
-                  placeholder="Column"
+                  placeholder="e.g. email"
                   onChange={(event) => handleInsertFieldChange(index, "column", event.target.value)}
                 />
                 <input
                   type="text"
                   value={field.value}
-                  placeholder="Value"
+                  placeholder="e.g. alice@example.com or 42"
                   onChange={(event) => handleInsertFieldChange(index, "value", event.target.value)}
                 />
                 {insertForm.fields.length > 1 && (
@@ -440,7 +440,7 @@ export default function TableManager({ tables = [], onRefreshTables }) {
                 list={tableSuggestionsId}
                 value={deleteForm.tableName}
                 onChange={(event) => setDeleteForm({ ...deleteForm, tableName: event.target.value })}
-                placeholder="Target table"
+                placeholder="e.g. users"
               />
             </label>
             <label className="field-inline">
@@ -457,13 +457,13 @@ export default function TableManager({ tables = [], onRefreshTables }) {
                   <input
                     type="text"
                     value={condition.column}
-                    placeholder="Column"
+                    placeholder="e.g. id"
                     onChange={(event) => handleConditionChange(index, "column", event.target.value)}
                   />
                   <input
                     type="text"
                     value={condition.value}
-                    placeholder="Value"
+                    placeholder="e.g. 1001"
                     onChange={(event) => handleConditionChange(index, "value", event.target.value)}
                   />
                   {deleteForm.conditions.length > 1 && (
@@ -499,7 +499,7 @@ export default function TableManager({ tables = [], onRefreshTables }) {
                 list={tableSuggestionsId}
                 value={dropForm.tableName}
                 onChange={(event) => setDropForm({ ...dropForm, tableName: event.target.value })}
-                placeholder="Table name"
+                placeholder="e.g. archived_logs"
               />
             </label>
             <label className="field-group">
@@ -508,7 +508,7 @@ export default function TableManager({ tables = [], onRefreshTables }) {
                 type="text"
                 value={dropForm.confirmText}
                 onChange={(event) => setDropForm({ ...dropForm, confirmText: event.target.value })}
-                placeholder="Confirmation"
+                placeholder="Type the table name again e.g. archived_logs"
               />
             </label>
             <button type="submit" className="primary danger" disabled={dropBusy}>

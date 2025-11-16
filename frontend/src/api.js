@@ -43,6 +43,13 @@ export async function executeQuery(sql) {
   });
 }
 
+export async function executeModification(sql) {
+  return await send("/sql/modify", {
+    method: "POST",
+    body: JSON.stringify({ sql }),
+  });
+}
+
 export async function createTable(payload) {
   return await send("/tables", {
     method: "POST",

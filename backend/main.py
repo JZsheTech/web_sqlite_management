@@ -71,6 +71,17 @@ async def run_query(query: QueryRequest):
         return make_response(None, success=False, error=str(exc), status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@app.post("/sql/modify")
+async def run_sql_script(query: QueryRequest):
+    try:
+        result = database.execute_script(query.sql)
+        return make_response(result)
+    except ValueError as exc:
+        return make_response(None, success=False, error=str(exc), status_code=status.HTTP_400_BAD_REQUEST)
+    except Exception as exc:  # pragma: no cover - runtime guard
+        return make_response(None, success=False, error=str(exc), status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @app.post("/tables", status_code=status.HTTP_201_CREATED)
 async def create_table(request: CreateTableRequest):
     try:

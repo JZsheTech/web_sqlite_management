@@ -3,10 +3,16 @@ import QueryEditor from "./components/QueryEditor";
 import ResultTable from "./components/ResultTable";
 import SidebarTables from "./components/SidebarTables";
 import TableManager from "./components/TableManager";
-import { API_BASE_URL, executeQuery, fetchTableSchema, fetchTables } from "./api";
+import SqlModificationPanel from "./components/SqlModificationPanel";
+import { API_BASE_URL, executeModification, executeQuery, fetchTableSchema, fetchTables } from "./api";
 import "./App.css";
 
 const defaultQuery = "SELECT name FROM sqlite_master WHERE type='table';";
+const defaultModificationSql = `-- Run SQL statements that modify schema or data
+CREATE TABLE IF NOT EXISTS demo (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL
+);`;
 
 export default function App() {
   const [tables, setTables] = useState([]);
@@ -19,6 +25,10 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [queryError, setQueryError] = useState("");
   const [isExecuting, setIsExecuting] = useState(false);
+  const [modificationSql, setModificationSql] = useState(defaultModificationSql);
+  const [modificationResult, setModificationResult] = useState(null);
+  const [modificationError, setModificationError] = useState("");
+  const [isModifying, setIsModifying] = useState(false);
   const [activeTab, setActiveTab] = useState("query");
 
   useEffect(() => {
@@ -68,6 +78,24 @@ export default function App() {
     }
   }
 
+  async function handleExecuteModification() {
+    setIsModifying(true);
+    setModificationError("");
+    setModificationResult(null);
+    try {
+      const data = await executeModification(modificationSql);
+      setModificationResult(data);
+      await loadTables();
+    } catch (error) {
+      setModificationError(error.message);
+    } finally {
+      setIsModifying(false);
+    }
+  }
+
+  const isBusy = isExecuting || isModifying;
+  const statusMessage = isModifying ? "Applying SQL script..." : isExecuting ? "Running query..." : "Idle";
+
   return (
     <div className="app-shell">
       <SidebarTables
@@ -89,8 +117,8 @@ export default function App() {
               Backend: <code>{API_BASE_URL}</code>
             </p>
           </div>
-          <div className={`status-chip ${isExecuting ? "busy" : "idle"}`}>
-            {isExecuting ? "Running query..." : "Idle"}
+          <div className={`status-chip ${isBusy ? "busy" : "idle"}`}>
+            {statusMessage}
           </div>
         </header>
 
@@ -106,6 +134,12 @@ export default function App() {
             onClick={() => setActiveTab("manage")}
           >
             Table management
+          </button>
+          <button
+            className={`tab-button ${activeTab === "modify" ? "active" : ""}`}
+            onClick={() => setActiveTab("modify")}
+          >
+            Table modification by SQL
           </button>
         </div>
 
@@ -123,8 +157,17 @@ export default function App() {
 
             <ResultTable result={result} isLoading={isExecuting} />
           </>
-        ) : (
+        ) : activeTab === "manage" ? (
           <TableManager tables={tables} onRefreshTables={loadTables} />
+        ) : (
+          <SqlModificationPanel
+            value={modificationSql}
+            onChange={setModificationSql}
+            onExecute={handleExecuteModification}
+            isExecuting={isModifying}
+            error={modificationError}
+            result={modificationResult}
+          />
         )}
       </main>
     </div>
