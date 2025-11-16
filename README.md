@@ -191,6 +191,8 @@ PORT=3100 npm start
 
 To减少 3000/8000 等常用端口被占用的情况，推荐前端运行在端口 `3100`，并调用后端 `http://localhost:8100`。
 
+> 🛰️ **Remote/Cloud IDE tip:** When exposing the frontend via a shared URL, override the API host by either setting `REACT_APP_API_BASE_URL` before `npm start` or appending `?apiBase=<encoded backend url>` to the browser URL (e.g. `?apiBase=https%3A%2F%2F8100-yourworkspace.example.dev`). This prevents the browser from trying to reach `localhost:8100` on your local machine.
+
 ---
 
 ## 🌱 Future Extensions (Optional for AI coder)
