@@ -196,9 +196,151 @@ button.ghost {
   color: #64748b;
 }
 
+.tab-header {
+  display: flex;
+  gap: 12px;
+}
+
+.tab-button {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 8px 18px;
+  background: rgba(148, 163, 184, 0.18);
+  cursor: pointer;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.tab-button.active {
+  background: #1d4ed8;
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+}
+
 .muted {
   color: #94a3b8;
   font-size: 13px;
+}
+
+input,
+select {
+  border: 1px solid #cbd5f5;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.manager-panel {
+  gap: 24px;
+}
+
+.manager-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.manager-grid section {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: inset 0 0 0 1px #e2e8f0;
+}
+
+.manager-grid h3 {
+  margin: 0;
+}
+
+.small-text {
+  font-size: 13px;
+  margin: 0;
+}
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.columns-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.column-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.column-card-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.column-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.flags-grid {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+}
+
+.flags-grid label {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.kv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  align-items: center;
+}
+
+.field-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.ghost.small {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.primary.danger {
+  background: #dc2626;
+  box-shadow: 0 10px 20px rgba(220, 38, 38, 0.3);
+}
+
+.success-text {
+  color: #15803d;
+  font-size: 13px;
+  margin: 0 0 4px;
 }
 
 .error-banner {

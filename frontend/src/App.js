@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import QueryEditor from "./components/QueryEditor";
 import ResultTable from "./components/ResultTable";
 import SidebarTables from "./components/SidebarTables";
+import TableManager from "./components/TableManager";
 import { API_BASE_URL, executeQuery, fetchTableSchema, fetchTables } from "./api";
 import "./App.css";
 
@@ -18,6 +19,7 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [queryError, setQueryError] = useState("");
   const [isExecuting, setIsExecuting] = useState(false);
+  const [activeTab, setActiveTab] = useState("query");
 
   useEffect(() => {
     loadTables();
@@ -92,17 +94,38 @@ export default function App() {
           </div>
         </header>
 
-        <QueryEditor
-          value={query}
-          onChange={setQuery}
-          onExecute={handleExecuteQuery}
-          isExecuting={isExecuting}
-          onUseTemplate={setQuery}
-        />
+        <div className="tab-header">
+          <button
+            className={`tab-button ${activeTab === "query" ? "active" : ""}`}
+            onClick={() => setActiveTab("query")}
+          >
+            Query data
+          </button>
+          <button
+            className={`tab-button ${activeTab === "manage" ? "active" : ""}`}
+            onClick={() => setActiveTab("manage")}
+          >
+            Table management
+          </button>
+        </div>
 
-        {queryError && <div className="error-banner">{queryError}</div>}
+        {activeTab === "query" ? (
+          <>
+            <QueryEditor
+              value={query}
+              onChange={setQuery}
+              onExecute={handleExecuteQuery}
+              isExecuting={isExecuting}
+              onUseTemplate={setQuery}
+            />
 
-        <ResultTable result={result} isLoading={isExecuting} />
+            {queryError && <div className="error-banner">{queryError}</div>}
+
+            <ResultTable result={result} isLoading={isExecuting} />
+          </>
+        ) : (
+          <TableManager tables={tables} onRefreshTables={loadTables} />
+        )}
       </main>
     </div>
   );

@@ -19,6 +19,16 @@ class SQLiteDatabase:
     def __init__(self, db_path: Optional[str] = None):
         self.db_path = os.path.abspath(db_path or resolve_db_path())
 
+    @staticmethod
+    def _sanitize_identifier(value: str) -> str:
+        cleaned = (value or "").strip()
+        if not cleaned:
+            raise ValueError("Identifier cannot be empty.")
+        plain = cleaned.replace("_", "")
+        if not plain.isalnum():
+            raise ValueError("Identifier may only include letters, numbers, and underscores.")
+        return cleaned
+
     @contextmanager
     def connect(self) -> Generator[sqlite3.Connection, None, None]:
         conn = sqlite3.connect(self.db_path)
@@ -47,9 +57,7 @@ class SQLiteDatabase:
 
     def get_table_schema(self, table: str) -> Dict[str, Any]:
         """Return PRAGMA table info for the requested table."""
-        sanitized = table.strip()
-        if not sanitized or not sanitized.replace("_", "").isalnum():
-            raise ValueError("Invalid table name provided.")
+        sanitized = self._sanitize_identifier(table)
         with self.connect() as conn:
             cursor = conn.execute(f"PRAGMA table_info('{sanitized}')")
             columns = [
@@ -65,7 +73,7 @@ class SQLiteDatabase:
             ]
             if not columns:
                 raise ValueError(f"Table '{table}' was not found.")
-            sample_rows = conn.execute(f"SELECT * FROM {sanitized} LIMIT 5").fetchall()
+            sample_rows = conn.execute(f'SELECT * FROM "{sanitized}" LIMIT 5').fetchall()
         return {
             "table": sanitized,
             "columns": columns,
@@ -97,3 +105,76 @@ class SQLiteDatabase:
                 "rowCount": 0,
                 "rowsAffected": cursor.rowcount,
             }
+
+    def create_table(self, table_name: str, columns: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Create a table with the supplied column definitions."""
+        sanitized_name = self._sanitize_identifier(table_name)
+        if not columns:
+            raise ValueError("At least one column definition is required.")
+
+        column_clauses = []
+        for column in columns:
+            name = self._sanitize_identifier(column.get("name", ""))
+            col_type = (column.get("type") or "").strip()
+            if not col_type:
+                raise ValueError(f"Column '{name}' must include a type.")
+            parts = [f'"{name}" {col_type}']
+            if column.get("primary_key"):
+                parts.append("PRIMARY KEY")
+            if column.get("not_null"):
+                parts.append("NOT NULL")
+            default_value = column.get("default_value")
+            if default_value not in (None, ""):
+                parts.append(f"DEFAULT {default_value}")
+            column_clauses.append(" ".join(parts))
+
+        statement = f'CREATE TABLE IF NOT EXISTS "{sanitized_name}" ({", ".join(column_clauses)})'
+        with self.connect() as conn:
+            conn.execute(statement)
+            conn.commit()
+        return {"table": sanitized_name, "sql": statement}
+
+    def insert_row(self, table: str, values: Dict[str, Any]) -> int:
+        """Insert a single row into a table."""
+        sanitized_table = self._sanitize_identifier(table)
+        if not values:
+            raise ValueError("Values cannot be empty.")
+        columns = []
+        params: List[Any] = []
+        for column, value in values.items():
+            columns.append(f'"{self._sanitize_identifier(column)}"')
+            params.append(value)
+        placeholders = ", ".join(["?"] * len(columns))
+        sql = f'INSERT INTO "{sanitized_table}" ({", ".join(columns)}) VALUES ({placeholders})'
+        with self.connect() as conn:
+            cursor = conn.execute(sql, params)
+            conn.commit()
+            return cursor.rowcount
+
+    def delete_rows(self, table: str, conditions: Optional[Dict[str, Any]] = None, delete_all: bool = False) -> int:
+        """Delete rows matching the supplied conditions. If delete_all is True all rows will be removed."""
+        sanitized_table = self._sanitize_identifier(table)
+        clauses: List[str] = []
+        params: List[Any] = []
+        if conditions:
+            for column, value in conditions.items():
+                clauses.append(f'"{self._sanitize_identifier(column)}" = ?')
+                params.append(value)
+        elif not delete_all:
+            raise ValueError("Specify conditions or enable delete_all to remove all rows.")
+
+        sql = f'DELETE FROM "{sanitized_table}"'
+        if clauses:
+            sql += f' WHERE {" AND ".join(clauses)}'
+
+        with self.connect() as conn:
+            cursor = conn.execute(sql, params)
+            conn.commit()
+            return cursor.rowcount
+
+    def drop_table(self, table: str) -> None:
+        """Drop a table if it exists."""
+        sanitized_table = self._sanitize_identifier(table)
+        with self.connect() as conn:
+            conn.execute(f'DROP TABLE IF EXISTS "{sanitized_table}"')
+            conn.commit()

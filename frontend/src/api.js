@@ -43,4 +43,32 @@ export async function executeQuery(sql) {
   });
 }
 
+export async function createTable(payload) {
+  return await send("/tables", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function insertRow(tableName, values) {
+  return await send(`/tables/${encodeURIComponent(tableName)}/rows`, {
+    method: "POST",
+    body: JSON.stringify({ values }),
+  });
+}
+
+export async function deleteRows(tableName, options) {
+  return await send(`/tables/${encodeURIComponent(tableName)}/rows`, {
+    method: "DELETE",
+    body: JSON.stringify(options),
+  });
+}
+
+export async function dropTable(tableName) {
+  return await send(`/tables/${encodeURIComponent(tableName)}`, {
+    method: "DELETE",
+    body: JSON.stringify({ confirm: true }),
+  });
+}
+
 export { API_BASE_URL };
